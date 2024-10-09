@@ -11,8 +11,6 @@ from dotenv import load_dotenv
 
 # from langchain_community.chat_models import ChatOllama
 
-# from langchain_core.runnables.history import RunnableWithMessageHistory
-
 load_dotenv()
 
 app = FastAPI()
@@ -25,7 +23,6 @@ llm = OpenAI(
     streaming=True
 )
 # llm = ChatOllama(model="EEVE-Korean-10.8B:latest")
-
 
 # Vector Store
 db = Chroma(persist_directory="./vector_store", embedding_function=OpenAIEmbeddings())
@@ -56,37 +53,11 @@ rag_chain = (
     | StrOutputParser()
 )      
 
-######################################################  Postgres 대화 DB 저장 Start
-# from langchain_community.chat_message_histories import (
-#     PostgresChatMessageHistory,
-# )
-# history = PostgresChatMessageHistory(
-#     # connection_string="postgresql://postgres:aithe@localhost/chat_history",
-#     connection_string="postgresql://postgres:aithe@localhost:5432/postgres",
-#     session_id  ="aithe2",
-#     # id          = "kevin1",       # TypeError: PostgresChatMessageHistory.__init__() got an unexpected keyword argument 'id'
-# )
-######################################################  Postgres 대화 DB 저장 End
-
-######################################################  GuardRail Part Start
-# from guardrails import Guard
-# from guardrails.hub import TwoWords
-# guard = Guard().use(TwoWords, on_fail="exception")      # Setup Guard
-######################################################  GuardRail Part End
-
 @app.post("/chat/")
 async def chat(query: UserQuery):
     """chat endpoint"""
     try:
-        # guard.validate(query.question)              ######  GuardRail
-        # history.add_user_message(query.question)    #####  Postgres 대화 DB 저장
-        
         answer = rag_chain.invoke(query.question).strip()
-        
-        # guard.validate(guard)                       ######  GuardRail
-        # history.add_ai_message(answer)              #####  Postgres 대화 DB 저장
-        
-        # answer = chain_with_history.invoke(query.question).strip()
         return {"answer": answer}
     except Exception as e:
         print(e)
