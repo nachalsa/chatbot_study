@@ -1,19 +1,6 @@
 version: '0.6'
-services:
-  
-  # postgres:
-  #   image: postgres:alpine
-  #   container_name: postgres
-  #   environment:
-  #     POSTGRES_DB : postgres
-  #     POSTGRES_USER : postgres
-  #     POSTGRES_PASSWORD : aithe
-  #     POSTGRES_HOST_AUTH_METHOD : trust
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres-data:/data/db
-  
+services:  
+
   backend_dev:
     build:
       context: ./backend
@@ -22,14 +9,6 @@ services:
       - ./backend/.env
     ports:
       - "8000:8000"
-    # environment:
-    #   DB_NAME: postgres
-    #   DB_USER: postgres
-    #   DB_PASSWORD: aithe
-    #   DB_HOST: localhost  
-    #   # POSTGRES_URL: postgresql://postgres:aithe@localhost:5432/postgres
-    # depends_on:
-    #   - postgres  
   
   react_dev:
     build:
@@ -42,5 +21,3 @@ services:
     environment:
       REACT_APP_URL: http://localhost:3000  
   
-volumes:
-  postgres-data:
