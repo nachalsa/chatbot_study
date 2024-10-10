@@ -8,7 +8,7 @@ RUN target=/root/.cache/pip \
     pip3 install -r requirements.txt
 
 # Copy the entire project into the working directory
-COPY . /app
+# COPY . /app
 COPY .env.* ./
 # final configuration
 # ENV FLASK_APP=hello
