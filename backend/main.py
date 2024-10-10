@@ -4,15 +4,14 @@ from pydantic import BaseModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import OpenAI, OpenAIEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 from src.utils import format_docs
 from src.prompt import prompt
 from dotenv import load_dotenv
-
 # from langchain_community.chat_models import ChatOllama
 
 load_dotenv()
-
 app = FastAPI()
 
 # LLM
@@ -24,8 +23,14 @@ llm = OpenAI(
 )
 # llm = ChatOllama(model="EEVE-Korean-10.8B:latest")
 
+# embeddings_model = OpenAIEmbeddings()
+# HuggingFaceEmbeddings 초기화
+embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")        
+
+
 # Vector Store
-db = Chroma(persist_directory="./vector_store", embedding_function=OpenAIEmbeddings())
+# db = Chroma(persist_directory="./vector_store", embedding_function=OpenAIEmbeddings())
+db = Chroma(persist_directory="./vector_store", embedding_function=embeddings_model)
 retriever = db.as_retriever(search_type="similarity")
 
 origins = [
