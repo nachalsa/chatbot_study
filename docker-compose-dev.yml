@@ -20,4 +20,5 @@ services:
       - "3000:3000"
     environment:
       REACT_APP_URL: http://localhost:3000  
-  
+
+# docker-compose -f docker-compose-dev.yml up -d --build      
