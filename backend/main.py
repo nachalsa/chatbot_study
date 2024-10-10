@@ -9,19 +9,19 @@ from langchain_chroma import Chroma
 from src.utils import format_docs
 from src.prompt import prompt
 from dotenv import load_dotenv
-# from langchain_community.chat_models import ChatOllama
+from langchain_community.chat_models import ChatOllama
 
 load_dotenv()
 app = FastAPI()
 
 # LLM
-llm = OpenAI(
-    model_name="gpt-3.5-turbo-instruct",
-    temperature=0.2,
-    max_tokens=512,
-    streaming=True
-)
-# llm = ChatOllama(model="EEVE-Korean-10.8B:latest")
+# llm = OpenAI(
+#     model_name="gpt-3.5-turbo-instruct",
+#     temperature=0.2,
+#     max_tokens=512,
+#     streaming=True
+# )
+llm = ChatOllama(model="mistral:latest")
 
 # embeddings_model = OpenAIEmbeddings()
 # HuggingFaceEmbeddings 초기화
