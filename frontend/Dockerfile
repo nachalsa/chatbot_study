@@ -13,7 +13,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy the rest of the application code
-# COPY . .
+COPY . .
 
 # Copy environment files (assuming they are in the root of the project)
 COPY .env.* ./

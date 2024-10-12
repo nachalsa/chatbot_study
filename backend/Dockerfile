@@ -11,6 +11,5 @@ RUN target=/root/.cache/pip \
 # COPY . /app
 COPY .env.* ./
 # final configuration
-# ENV FLASK_APP=hello
 EXPOSE 8000
 CMD ["fastapi", "run", "main.py"]
