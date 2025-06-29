@@ -22,8 +22,8 @@ app = FastAPI()
 #     max_tokens=512,
 #     streaming=True
 # )
-# llm = ChatOllama(model="mistral:latest")
-llm = ChatOllama(model="mistral:latest", base_url="http://ollama_dev:11434")
+llm = ChatOllama(model="mistral:latest")
+# llm = ChatOllama(model="mistral:latest", base_url="http://ollama_dev:11434")
 # llm = ChatOllama(model="mistral:latest", base_url=os.getenv("OLLAMA_BASE_URL"))
 
 # embeddings_model = OpenAIEmbeddings()
@@ -37,8 +37,8 @@ db = Chroma(persist_directory="./vector_store", embedding_function=embeddings_mo
 retriever = db.as_retriever(search_type="similarity")
 
 origins = [
-    "http://61.108.166.16",
-    "http://61.108.166.16:3000",
+    "http://localhost",
+    "http://localhost:3000",
 ]
 
 app.add_middleware(
