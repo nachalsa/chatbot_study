@@ -1,6 +1,6 @@
-version: '3.8'
 services:  
   backend_dev:
+    hostname: backend_dev
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -10,7 +10,7 @@ services:
       - "8000:8000"
     volumes:
       - ./backend:/app                    # 소스 코드 마운트
-      - ./vector_store:/app/vector_store  # 벡터 스토어 마운트
+      - ./backend/vector_store:/app/vector_store  # 벡터 스토어 마운트
     networks:
       - app_network
     environment:
@@ -31,8 +31,8 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      REACT_APP_URL: http://61.108.166.16:3000
-      REACT_APP_API_URL: http://61.108.166.16:8000
+      REACT_APP_URL: http://localhost:3000
+      REACT_APP_API_URL: http://localhost:8000
       DISABLE_ESLINT_PLUGIN: "true"
       CI: "false"
     networks:
@@ -46,6 +46,10 @@ services:
       - "11434:11434"
     volumes:
       - ./ollama/models:/models
+      - ./ollama-ipex-llm-2.2.0-ubuntu:/app/ollama-ipex
+      - /usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:ro
+    devices:
+      - /dev/dri:/dev/dri
     networks:
       - app_network             
 
