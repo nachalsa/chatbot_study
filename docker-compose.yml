@@ -18,6 +18,9 @@ services:
     # 컨테이너가 계속 실행되도록 설정
     tty: true
     stdin_open: true
+    
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   
   react_dev:
     build:
@@ -47,11 +50,10 @@ services:
     volumes:
       - ./ollama/models:/models
       - ./ollama-ipex-llm-2.2.0-ubuntu:/app/ollama-ipex
-      - /usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:ro
     devices:
       - /dev/dri:/dev/dri
     networks:
-      - app_network             
+      - app_network
 
 networks:
   app_network:

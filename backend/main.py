@@ -41,7 +41,10 @@ app.add_middleware(
 )
 
 # LLM 설정
-llm = Ollama(model="mistral:latest", temperature=0.1, request_timeout=360000)
+# 로컬 환경
+# llm = Ollama(model="mistral:latest", temperature=0.1, request_timeout=360000)
+# 도커 환경
+llm = Ollama(model="mistral:latest", base_url="http://ollama_dev:11434", temperature=0.1, request_timeout=360000)
 
 # HuggingFace 임베딩 모델
 embed_model = HuggingFaceEmbedding(model_name="dragonkue/BGE-m3-ko")
@@ -49,7 +52,10 @@ embed_model = HuggingFaceEmbedding(model_name="dragonkue/BGE-m3-ko")
 # 벡터 저장소 연결
 vector_store = PGVectorStore.from_params(
     database="chatbot",
-    host="localhost",
+# 로컬 환경
+    # host="localhost",
+# 도커 환경
+    host="host.docker.internal",
     password="chatbot01",
     port="5432",
     user="chatbot01",
