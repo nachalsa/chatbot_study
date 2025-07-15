@@ -1,5 +1,9 @@
 FROM ollama/ollama:latest
 
+# Hash 충돌시 우회링크
+# RUN sed -i 's|URIs: http://archive.ubuntu.com/ubuntu/|URIs: http://mirror.kakao.com/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources && \
+#     sed -i 's|URIs: http://security.ubuntu.com/ubuntu/|URIs: http://mirror.kakao.com/ubuntu/|g' /etc/apt/sources.list.d/ubuntu.sources
+
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     software-properties-common \
