@@ -49,7 +49,6 @@ services:
       - "11434:11434"
     volumes:
       - ./ollama/models:/models
-      - ./ollama-ipex-llm-2.2.0-ubuntu:/app/ollama-ipex
     devices:
       - /dev/dri:/dev/dri
     networks:

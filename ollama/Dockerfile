@@ -24,6 +24,14 @@ RUN apt-get update && \
 COPY start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
+
+RUN cd /tmp && \
+    wget https://github.com/ipex-llm/ipex-llm/releases/download/v2.2.0/ollama-ipex-llm-2.2.0-ubuntu.tgz && \
+    tar -xzf ollama-ipex-llm-2.2.0-ubuntu.tgz && \
+    mkdir -p /app && \
+    mv ollama-ipex-llm-2.2.0-ubuntu /app/ollama-ipex && \
+    rm ollama-ipex-llm-2.2.0-ubuntu.tgz
+
 # Ollama API Port
 EXPOSE 11434
 
