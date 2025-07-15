@@ -17,34 +17,17 @@ import os
 import chromadb
 import json
 
+from llama_index.core.schema import NodeWithScore
+from llama_index.core.postprocessor.types import BaseNodePostprocessor
+from llama_index.core.postprocessor import MetadataReplacementPostProcessor
+from llama_index.vector_stores.postgres import PGVectorStore
+from typing import List, Optional
+# Load environment variables
 load_dotenv()
 
 app = FastAPI()
 
-# llm = ChatOllama(model="mistral:latest")
-llm = Ollama(model="mistral:latest", temperature=0.1, request_timeout=360000)
-
-# HuggingFaceEmbeddings 초기화
-embeddings_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2") 
-
-# ChromaDB 클라이언트 생성 및 기존 컬렉션 로드
-chroma_client = chromadb.PersistentClient(path="./vector_store")
-chroma_collection = chroma_client.get_collection("my_collection")
-
-# ChromaVectorStore 생성
-vector_store = ChromaVectorStore(chroma_collection=chroma_collection)
-
-# StorageContext 생성
-storage_context = StorageContext.from_defaults(vector_store=vector_store)
-
-Settings.embed_model = embeddings_model
-
-# VectorStoreIndex 생성 (이미 존재하는 vector store 사용)
-index = VectorStoreIndex.from_vector_store(
-    vector_store,
-    storage_context=storage_context,
-)
-
+# Allow CORS for frontend
 origins = [
     "http://localhost",
     "http://localhost:3000",
@@ -58,26 +41,80 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# LLM 설정
+llm = Ollama(model="mistral:latest", temperature=0.1, request_timeout=360000)
+
+# HuggingFace 임베딩 모델
+embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+# 벡터 저장소 연결
+vector_store = PGVectorStore.from_params(
+    database="chatbot",
+    host="localhost",
+    password="chatbot01",
+    port="5432",
+    user="chatbot01",
+    schema_name="public",
+    table_name="tmp_chatbot",
+    embed_dim=384,
+)
+
+# 사용자 쿼리 모델
 class UserQuery(BaseModel):
-    """user question input model"""
     question: str
 
-# llama_index
-query_engine = index.as_query_engine(
-    llm=llm, 
-    similarity_top_k=3,
+
+# 사용자 정의 후처리기
+class CustomPostprocessor(BaseNodePostprocessor):
+    def _postprocess_nodes(
+        self,
+        nodes: List[NodeWithScore],
+        query_bundle: Optional[QueryBundle]
+    ) -> List[NodeWithScore]:
+        print("========== Custom Postprocessor ========== ")
+        for n in nodes:
+            print(f"file_name: {n.metadata.get('file_name', 'N/A')}")
+            print(n)
+        print("Query Bundle:", query_bundle)
+        return nodes
+
+
+# 후처리기 목록
+custom_postprocessor = CustomPostprocessor()
+node_postprocessors = [
+    custom_postprocessor,
+    MetadataReplacementPostProcessor(target_metadata_key="window")
+]
+
+# StorageContext 생성
+storage_context = StorageContext.from_defaults(vector_store=vector_store)
+
+# 인덱스 로딩
+index = VectorStoreIndex.from_vector_store(
+    vector_store=vector_store,
+    storage_context=storage_context,
+    embed_model=embed_model,
 )
+
+# 쿼리 엔진 구성
+query_engine = index.as_query_engine(
+    llm=llm,
+    similarity_top_k=10,
+    node_postprocessors=node_postprocessors
+)
+
+# 프롬프트 업데이트
 query_engine.update_prompts(prompt)
+
 
 @app.post("/chat/")
 async def chat(request: Request):
-    """chat endpoint"""
     try:
         body = await request.json()
-        query = body["query"]
+        query = body.get("query", "")
         answer = query_engine.query(query)
-        # answer = rag_chain.invoke(query.question).strip()
-        return {"answer": answer}
+        
+        return {"answer": str(answer)}
     except Exception as e:
-        print(e)
-        return {"error": str(e)}
+        print("Error in /chat/ endpoint:", e)
+        return {"answer": str(e)}
