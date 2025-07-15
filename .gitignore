@@ -6,3 +6,4 @@ frontend/node_modules
 /backend/vector_store
 /m_asset_poc/venv
 /ollama-ipex-llm-2.2.0-ubuntu
+/ollama/model

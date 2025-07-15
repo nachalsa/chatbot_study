@@ -14,6 +14,7 @@ from src.prompt import prompt
 
 from dotenv import load_dotenv
 import os
+import chromadb
 
 load_dotenv()
 app = FastAPI()
@@ -28,7 +29,7 @@ llm = Ollama(
 )
 
 # HuggingFaceEmbedding 초기화
-embeddings_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")        
+embeddings_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")        
 
 # ChromaDB 클라이언트 생성 및 기존 컬렉션 로드
 chroma_client = chromadb.PersistentClient(path="./vector_store")
