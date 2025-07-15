@@ -2,12 +2,15 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from llama_index.core import VectorStoreIndex, PromptTemplate, Settings
-from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.core import VectorStoreIndex, PromptTemplate, Settings, QueryBundle, StorageContext
+from llama_index.core.schema import NodeWithScore
+from llama_index.core.postprocessor import MetadataReplacementPostProcessor
+from llama_index.core.postprocessor.types import BaseNodePostprocessor
 from llama_index.llms.ollama import Ollama
-from llama_index.core import StorageContext
 from llama_index.vector_stores.chroma import ChromaVectorStore
-from llama_index.core import Settings
+from llama_index.vector_stores.postgres import PGVectorStore
+from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+
 
 from src.utils import format_docs
 from src.prompt_llamaIndex import prompt
@@ -17,10 +20,6 @@ import os
 import chromadb
 import json
 
-from llama_index.core.schema import NodeWithScore
-from llama_index.core.postprocessor.types import BaseNodePostprocessor
-from llama_index.core.postprocessor import MetadataReplacementPostProcessor
-from llama_index.vector_stores.postgres import PGVectorStore
 from typing import List, Optional
 # Load environment variables
 load_dotenv()
@@ -109,12 +108,13 @@ query_engine.update_prompts(prompt)
 
 @app.post("/chat/")
 async def chat(request: Request):
+    """chat endpoint"""
     try:
         body = await request.json()
-        query = body.get("query", "")
+        query = body["query"]
+
         answer = query_engine.query(query)
-        
-        return {"answer": str(answer)}
+        return {"answer": answer}
     except Exception as e:
-        print("Error in /chat/ endpoint:", e)
-        return {"answer": str(e)}
+        print(e)
+        return {"error": str(e)}
