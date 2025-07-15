@@ -1,9 +1,10 @@
-backend/venv
 frontend/node_modules
-/venv
+/.venv
 /backend/vector_store
 /backend/__pycache__
 /backend/vector_store
+/backend/src/__pycache__
+/backend/src/storage
 /m_asset_poc/venv
 /ollama-ipex-llm-2.2.0-ubuntu
-/ollama/model
+/ollama/models
