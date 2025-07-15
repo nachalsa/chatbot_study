@@ -7,6 +7,7 @@ FROM ollama/ollama:latest
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     software-properties-common \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 RUN add-apt-repository -y ppa:kobuk-team/intel-graphics
