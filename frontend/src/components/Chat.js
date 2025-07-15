@@ -38,12 +38,12 @@ const Chat = () => {
                 {
                   direction: "outgoing",
                   content: innerText,
-                  sentTime: new Date(),
+                  sentTime: new Date().toISOString(),
                   sender: "user",
                 },
               ]);
 
-              const response = await axios.post("http://localhost:8000/chat", {
+              const response = await axios.post("http://localhost:8000/chat/", {
                 query: textContent,
               });
 
@@ -52,7 +52,7 @@ const Chat = () => {
                 {
                   direction: "incoming",
                   content: response.data.answer.response,
-                  sentTime: new Date(),
+                  sentTime: new Date().toISOString(),
                   sender: "ai",
                 },
               ]);
