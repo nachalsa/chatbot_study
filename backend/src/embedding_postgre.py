@@ -137,12 +137,12 @@ def create_index(docs, schema_name="public", table_name="tmp"):
         user="chatbot01",
         schema_name=schema_name,
         table_name=table_name,
-        embed_dim=384,
+        embed_dim=1024,
     )
 
     storage_context = StorageContext.from_defaults(vector_store=vector_store)
 
-    embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+    embed_model = HuggingFaceEmbedding(model_name="dragonkue/BGE-m3-ko")
     # embed_model = OpenAIEmbedding()
 
     doc_or_node = is_doc(docs[0])

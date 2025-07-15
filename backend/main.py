@@ -44,7 +44,7 @@ app.add_middleware(
 llm = Ollama(model="mistral:latest", temperature=0.1, request_timeout=360000)
 
 # HuggingFace 임베딩 모델
-embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embed_model = HuggingFaceEmbedding(model_name="dragonkue/BGE-m3-ko")
 
 # 벡터 저장소 연결
 vector_store = PGVectorStore.from_params(
@@ -55,7 +55,7 @@ vector_store = PGVectorStore.from_params(
     user="chatbot01",
     schema_name="public",
     table_name="tmp_chatbot",
-    embed_dim=384,
+    embed_dim=1024,
 )
 
 # 사용자 쿼리 모델
