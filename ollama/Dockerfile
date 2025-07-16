@@ -36,5 +36,5 @@ RUN cd /tmp && \
 # Ollama API Port
 EXPOSE 11434
 
-ENTRYPOINT ["usr/local/bin/start.sh"]
+ENTRYPOINT ["/usr/local/bin/start.sh"]
 CMD [] 
